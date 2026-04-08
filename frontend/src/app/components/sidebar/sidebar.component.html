@@ -1,0 +1,23 @@
+<aside class="sidebar-shell card border-0 shadow-sm">
+  <div class="brand-block">
+    <div class="brand-mark">
+      <i class="bi bi-kanban-fill"></i>
+    </div>
+    <div>
+      <p class="mb-1 brand-name">Gestion de Stock</p>
+      <small class="text-muted">Control room</small>
+    </div>
+  </div>
+
+  <nav class="nav flex-column gap-2 mt-4">
+    <a
+      *ngFor="let link of links"
+      class="nav-link d-flex align-items-center gap-3"
+      routerLinkActive="active"
+      [routerLink]="link.path"
+    >
+      <i class="bi" [ngClass]="link.icon"></i>
+      <span>{{ link.label }}</span>
+    </a>
+  </nav>
+</aside>

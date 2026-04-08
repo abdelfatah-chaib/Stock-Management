@@ -1,0 +1,135 @@
+<section class="page-wrapper">
+  <div class="page-header card border-0 shadow-sm mb-4">
+    <div class="card-body p-4">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div>
+          <p class="eyebrow mb-1">Inventory</p>
+          <h2 class="h3 mb-1">Gestion des Articles</h2>
+          <p class="text-muted mb-0">Create, update and delete stock articles from the backend.</p>
+        </div>
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-outline-primary" (click)="refresh()">
+            <i class="bi bi-arrow-repeat me-2"></i>Reload
+          </button>
+          <button type="button" class="btn btn-primary" (click)="startCreate()">
+            <i class="bi bi-plus-lg me-2"></i>New article
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="feedback" class="alert alert-success shadow-sm">{{ feedback }}</div>
+  <div *ngIf="errorFeedback" class="alert alert-danger shadow-sm">{{ errorFeedback }}</div>
+
+  <div class="row g-4 align-items-start">
+    <div class="col-xl-5">
+      <div class="card border-0 shadow-sm sticky-card" #articleFormCard>
+        <div class="card-header bg-white border-0 px-4 pt-4 pb-0">
+          <h5 class="mb-1">{{ editingId ? 'Modifier un article' : 'Ajouter un article' }}</h5>
+          <small class="text-muted">The form maps directly to the Spring Boot payload.</small>
+        </div>
+        <div class="card-body p-4">
+          <form [formGroup]="form" (ngSubmit)="save()" class="row g-3">
+            <div class="col-12">
+              <label class="form-label" for="articleNom">Nom</label>
+              <input #articleNameInput id="articleNom" name="articleNom" class="form-control" formControlName="nom" placeholder="Ex: Laptop HP" />
+            </div>
+
+            <div class="col-12">
+              <label class="form-label" for="articleDescription">Description</label>
+              <textarea id="articleDescription" name="articleDescription" class="form-control" rows="3" formControlName="description" placeholder="Détails de l'article"></textarea>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label" for="articlePrix">Prix</label>
+              <input id="articlePrix" name="articlePrix" type="number" class="form-control" formControlName="prix" min="0" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="articleCategorieId">Catégorie</label>
+              <select id="articleCategorieId" name="articleCategorieId" class="form-select" formControlName="categorieId">
+                <option [ngValue]="null">Choose...</option>
+                <option *ngFor="let categorie of categories" [ngValue]="categorie.id">{{ categorie.nom }}</option>
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label" for="articleStockMin">Stock min</label>
+              <input id="articleStockMin" name="articleStockMin" type="number" class="form-control" formControlName="stockMin" min="0" />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="articleStockMax">Stock max</label>
+              <input id="articleStockMax" name="articleStockMax" type="number" class="form-control" formControlName="stockMax" min="0" />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="articleStockReel">Stock réel</label>
+              <input id="articleStockReel" name="articleStockReel" type="number" class="form-control" formControlName="stockReel" min="0" />
+            </div>
+
+            <div class="col-12 d-flex gap-2 pt-2">
+              <button class="btn btn-primary px-4" type="submit" [disabled]="saving">
+                <span *ngIf="saving" class="spinner-border spinner-border-sm me-2"></span>
+                {{ editingId ? 'Update' : 'Save' }}
+              </button>
+              <button class="btn btn-outline-secondary" type="button" (click)="cancelEdit()">Reset</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-7">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 px-4 pt-4 pb-0">
+          <h5 class="mb-1">Liste des articles</h5>
+          <small class="text-muted">{{ articles.length }} articles loaded from /articles</small>
+        </div>
+        <div class="card-body p-4">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead>
+                <tr>
+                  <th>Nom</th>
+                  <th>Catégorie</th>
+                  <th>Stock</th>
+                  <th>Prix</th>
+                  <th>Etat</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let article of articles">
+                  <td>
+                    <div class="fw-semibold">{{ article.nom }}</div>
+                    <small class="text-muted">{{ article.description || 'No description' }}</small>
+                  </td>
+                  <td>{{ article.categorie?.nom || 'N/A' }}</td>
+                  <td>
+                    <span class="badge px-3 py-2" [ngClass]="statusClass(article)">
+                      {{ article.stockReel }} / {{ article.stockMax }}
+                    </span>
+                  </td>
+                  <td>{{ article.prix | number : '1.2-2' }} MAD</td>
+                  <td>{{ article.etat || 'Disponible' }}</td>
+                  <td class="text-end">
+                    <div class="btn-group btn-group-sm">
+                      <button type="button" class="btn btn-outline-primary" (click)="edit(article)">
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      <button type="button" class="btn btn-outline-danger" (click)="remove(article)">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="!articles.length">
+                  <td colspan="6" class="text-center text-muted py-4">No article found.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

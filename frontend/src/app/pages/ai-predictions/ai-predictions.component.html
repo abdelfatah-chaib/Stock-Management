@@ -1,0 +1,129 @@
+<section class="page-wrapper">
+  <!-- Header -->
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-5">
+      <p class="eyebrow mb-2">AI Intelligence</p>
+      <h2 class="h3 mb-3">Stock Rupture Predictions</h2>
+      <p class="text-muted mb-0">
+        Machine learning-powered analysis to predict stock ruptures and recommend optimal reordering quantities.
+      </p>
+    </div>
+  </div>
+
+  <!-- Error Messages -->
+  <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>Error:</strong> {{ errorMessage }}
+    <button type="button" class="btn-close" (click)="errorMessage = null"></button>
+  </div>
+
+  <!-- Controls -->
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-4">
+      <div class="row g-3">
+        <!-- Search -->
+        <div class="col-md-6">
+          <label for="searchInput" class="form-label fw-bold">Search Articles</label>
+          <input
+            type="text"
+            class="form-control"
+            id="searchInput"
+            placeholder="Search by article name..."
+            [(ngModel)]="searchKeyword"
+            (input)="onSearchChange()"
+          />
+        </div>
+
+        <!-- Actions -->
+        <div class="col-md-6">
+          <span class="form-label fw-bold d-block mb-2">Actions</span>
+          <div class="d-flex gap-2">
+            <button
+              class="btn btn-outline-danger"
+              (click)="clearPredictions()"
+              [disabled]="predictions.size === 0"
+            >
+              <i class="bi bi-trash"></i> Clear Results
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Articles List with Per-Article Prediction -->
+  <div class="card border-0 shadow-sm" *ngIf="displayedArticles.length > 0">
+    <div class="card-header bg-light border-bottom">
+      <h5 class="mb-0">Articles for AI Analysis ({{ displayedArticles.length }} items)</h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Article</th>
+              <th class="text-end">Current Stock</th>
+              <th class="text-end">Min Stock</th>
+              <th class="text-end">Max Stock</th>
+              <th class="text-end">Price</th>
+              <th>Prediction</th>
+              <th class="text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let article of displayedArticles">
+              <td>{{ article.nom }}</td>
+              <td class="text-end">{{ article.stockReel }} units</td>
+              <td class="text-end">{{ article.stockMin }} units</td>
+              <td class="text-end">{{ article.stockMax }} units</td>
+              <td class="text-end">${{ article.prix | number: '1.2-2' }}</td>
+              <td>
+                <ng-container *ngIf="getPrediction(article.id) as prediction; else noPrediction">
+                  <div *ngIf="prediction.loading" class="d-flex align-items-center gap-2 text-muted">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <span>Analyzing...</span>
+                  </div>
+                  <span *ngIf="!prediction.loading" style="white-space: pre-wrap;">{{ prediction.analysis }}</span>
+                </ng-container>
+                <ng-template #noPrediction>
+                  <span class="text-muted">Not analyzed yet</span>
+                </ng-template>
+              </td>
+              <td class="text-center">
+                <button
+                  class="btn btn-sm btn-outline-primary"
+                  (click)="predictArticle(article)"
+                  [disabled]="getPrediction(article.id)?.loading ?? false"
+                >
+                  <span *ngIf="!(getPrediction(article.id)?.loading)">
+                    <i class="bi bi-graph-up"></i> Analyze
+                  </span>
+                  <span *ngIf="getPrediction(article.id)?.loading">
+                    <i class="bi bi-hourglass-split"></i> Running
+                  </span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="card border-0 shadow-sm" *ngIf="displayedArticles.length === 0 && !loading">
+    <div class="card-body p-5 text-center">
+      <h5>No articles found</h5>
+      <p class="text-muted mb-0">No articles match your search criteria.</p>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="card border-0 shadow-sm" *ngIf="loading && displayedArticles.length === 0">
+    <div class="card-body p-5 text-center">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-3 text-muted">Loading articles...</p>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,82 @@
+<section class="page-wrapper">
+  <div class="page-header card border-0 shadow-sm mb-4">
+    <div class="card-body p-4">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div>
+          <p class="eyebrow mb-1">Catalog</p>
+          <h2 class="h3 mb-1">Gestion des Catégories</h2>
+          <p class="text-muted mb-0">Maintain the classification used by the article form.</p>
+        </div>
+        <button type="button" class="btn btn-primary" (click)="startCreate()">
+          <i class="bi bi-plus-lg me-2"></i>New category
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="feedback" class="alert alert-success shadow-sm">{{ feedback }}</div>
+  <div *ngIf="errorFeedback" class="alert alert-danger shadow-sm">{{ errorFeedback }}</div>
+
+  <div class="row g-4 align-items-start">
+    <div class="col-xl-5">
+      <div class="card border-0 shadow-sm sticky-card" #categoryFormCard>
+        <div class="card-body p-4">
+          <form [formGroup]="form" (ngSubmit)="save()" class="row g-3">
+            <div class="col-12">
+              <label class="form-label" for="categoryNom">Nom</label>
+              <input #categoryNameInput id="categoryNom" name="categoryNom" class="form-control" formControlName="nom" placeholder="Ex: Informatique" />
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="categoryDescription">Description</label>
+              <textarea id="categoryDescription" name="categoryDescription" class="form-control" rows="4" formControlName="description"></textarea>
+            </div>
+            <div class="col-12 d-flex gap-2">
+              <button class="btn btn-primary" type="submit" [disabled]="saving">
+                <span *ngIf="saving" class="spinner-border spinner-border-sm me-2"></span>
+                {{ editingId ? 'Update' : 'Save' }}
+              </button>
+              <button class="btn btn-outline-secondary" type="button" (click)="startCreate()">Reset</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-7">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead>
+                <tr>
+                  <th>Nom</th>
+                  <th>Description</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let category of categories">
+                  <td class="fw-semibold">{{ category.nom }}</td>
+                  <td>{{ category.description || 'N/A' }}</td>
+                  <td class="text-end">
+                    <div class="btn-group btn-group-sm">
+                      <button type="button" class="btn btn-outline-primary" (click)="edit(category)">
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      <button type="button" class="btn btn-outline-danger" (click)="remove(category)">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="!categories.length">
+                  <td colspan="3" class="text-center text-muted py-4">No category found.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

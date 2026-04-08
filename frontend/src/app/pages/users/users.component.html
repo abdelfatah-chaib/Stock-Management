@@ -1,0 +1,104 @@
+<section class="page-wrapper">
+  <div class="page-header card border-0 shadow-sm mb-4">
+    <div class="card-body p-4">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div>
+          <p class="eyebrow mb-1">Identity</p>
+          <h2 class="h3 mb-1">Gestion des Utilisateurs</h2>
+          <p class="text-muted mb-0">Assign department and role on user creation.</p>
+        </div>
+        <button type="button" class="btn btn-primary" (click)="startCreate()">
+          <i class="bi bi-person-plus me-2"></i>New user
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="feedback" class="alert alert-success shadow-sm">{{ feedback }}</div>
+  <div *ngIf="errorFeedback" class="alert alert-danger shadow-sm">{{ errorFeedback }}</div>
+
+  <div class="row g-4 align-items-start">
+    <div class="col-xl-5">
+      <div class="card border-0 shadow-sm sticky-card" #userFormCard>
+        <div class="card-body p-4">
+          <form [formGroup]="form" (ngSubmit)="save()" class="row g-3">
+            <div class="col-12">
+              <label class="form-label" for="userNom">Nom</label>
+              <input #userNameInput id="userNom" name="userNom" class="form-control" formControlName="nom" placeholder="Ex: Othmane Ben" />
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="userEmail">Email</label>
+              <input id="userEmail" name="userEmail" class="form-control" type="email" formControlName="email" placeholder="user@email.com" />
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="userPassword">Password</label>
+              <input id="userPassword" name="userPassword" class="form-control" type="password" formControlName="password" placeholder="••••••••" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="userRoleNom">Role</label>
+              <select id="userRoleNom" name="userRoleNom" class="form-select" formControlName="roleNom">
+                <option [ngValue]="''">Choose...</option>
+                <option *ngFor="let role of roles" [ngValue]="role.nom">{{ role.nom }}</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="userDepartementId">Département</label>
+              <select id="userDepartementId" name="userDepartementId" class="form-select" formControlName="departementId">
+                <option [ngValue]="null">Choose...</option>
+                <option *ngFor="let department of departments" [ngValue]="department.id">{{ department.nomDep }}</option>
+              </select>
+            </div>
+            <div class="col-12 d-flex gap-2">
+              <button class="btn btn-primary" type="submit" [disabled]="saving">
+                <span *ngIf="saving" class="spinner-border spinner-border-sm me-2"></span>
+                {{ editingId ? 'Update' : 'Save' }}
+              </button>
+              <button class="btn btn-outline-secondary" type="button" (click)="startCreate()">Reset</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-7">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead>
+                <tr>
+                  <th>Nom</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Département</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let user of users">
+                  <td class="fw-semibold">{{ user.nom }}</td>
+                  <td>{{ user.email }}</td>
+                  <td>{{ user.role?.nom || 'N/A' }}</td>
+                  <td>{{ user.departement?.nomDep || 'N/A' }}</td>
+                  <td class="text-end">
+                    <div class="btn-group btn-group-sm">
+                      <button type="button" class="btn btn-outline-primary" (click)="edit(user)">
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      <button type="button" class="btn btn-outline-danger" (click)="remove(user)">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="!users.length">
+                  <td colspan="5" class="text-center text-muted py-4">No user found.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
