@@ -34,7 +34,7 @@ public class Article {
     @ManyToOne
     private Categorie categorie;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<Demande> demandes = new ArrayList<Demande>();
     @PrePersist
     public void prePersist() {

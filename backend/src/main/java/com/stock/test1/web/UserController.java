@@ -53,7 +53,11 @@ public class UserController {
     @PutMapping("/updateUser")
     public User modifierUser(@RequestBody User user){
         User user1 = userRepository.findById(user.getId()).orElse(null);
-
+        user1.setNom(user.getNom());
+        user1.setPassword(user.getPassword());
+        user1.setEmail(user.getEmail());
+        user1.setRole(user.getRole());
+        user1.setDepartement(user.getDepartement());
         return userRepository.save(user1);
     }
 

@@ -44,8 +44,8 @@ public class DepartementController {
     public  Departement modifierDep(@RequestBody Departement departement){
         Departement departement1 = departementRepository.findById(departement.getId()).orElse(null);
         departement1.setChefDep(departement.getChefDep());
-        departement.setNomDep(departement.getNomDep());
-        return  departementRepository.save(departement);
+        departement1.setNomDep(departement.getNomDep());
+        return  departementRepository.save(departement1);
     }
 
     @DeleteMapping("/deleteDep/{id}")

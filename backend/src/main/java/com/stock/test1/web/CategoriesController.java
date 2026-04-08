@@ -24,7 +24,7 @@ public class CategoriesController {
         return categorieRepository.findByNomContains(keyword,PageRequest.of(page, size));
     }
 
-    @GetMapping("categories")
+    @GetMapping("/categories")
     public List<Categorie> getCate(){
         return categorieRepository.findAll();
     }

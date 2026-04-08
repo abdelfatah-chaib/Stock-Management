@@ -23,7 +23,7 @@ public class Demande {
     @ManyToOne
     private User user;
 
-    @ManyToMany(mappedBy = "demandes" , fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "demandes" , fetch = FetchType.LAZY)
     private List<Article> articles = new ArrayList<Article>();
 
     @PrePersist

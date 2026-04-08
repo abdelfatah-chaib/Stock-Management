@@ -6,9 +6,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface ArticleRepository extends JpaRepository<Article,Long> {
 
     Page<Article> findByNomContains(String k , Pageable p);
+    List<Article> findByNomIsNullOrNom(String nom);
+    void deleteByNomIsNullOrNom(String nom);
+
     @Query("SELECT COUNT(c) FROM Article c")
     Long getTotalArticle();
 
