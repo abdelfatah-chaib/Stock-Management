@@ -1,0 +1,20 @@
+# VCS and editor metadata
+.git
+.gitignore
+.vscode
+.idea
+
+# OS and temp files
+*.log
+*.tmp
+*.swp
+.DS_Store
+Thumbs.db
+
+# Frontend workspace is not needed for current Docker build
+frontend
+
+# Local build artifacts
+backend/target
+frontend/node_modules
+frontend/dist
